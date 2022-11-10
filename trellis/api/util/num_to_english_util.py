@@ -1,3 +1,5 @@
+from trellis.api.exceptions.exceptions import BusinessException, InternalErrorException
+
 ref = {
     0: 'zero',
     1: 'one',
@@ -57,7 +59,7 @@ def get_previous_scale(scale):
     return int(scale / k)
 
 
-def get_greater_and_label():
+def get_biggest_and_label():
     greater = list(labels.keys())[-1]
     label = labels[greater]
     return greater, label
@@ -65,11 +67,11 @@ def get_greater_and_label():
 
 def to_english(num):
     if num < 0:
-        raise Exception('numbers less than 0 are not allowed')
+        raise BusinessException('Numbers less than 0 are not allowed')
 
-    max_number, label = get_greater_and_label()
+    max_number, label = get_biggest_and_label()
     if num > max_number:
-        raise Exception('numbers greater than one ' + label + ' are not allowed')
+        raise BusinessException('Numbers greater than one ' + label + ' are not allowed')
 
     if num in ref:
         return ref[num]
@@ -93,4 +95,4 @@ def to_english(num):
 
         return partial_result + to_english(num % p_scale)
 
-    raise Exception('samething is wrong')
+    raise InternalErrorException('Samething is wrong')

@@ -13,7 +13,7 @@ class NumberView(viewsets.ViewSet):
 
             return http_util.ok(result)
         except Exception as e:
-            return http_util.error(str(e))
+            return http_util.handle_exception(e)
 
     def get_number_param(self, request: Request):
         number = http_util.get_query_param(request, 'number')
