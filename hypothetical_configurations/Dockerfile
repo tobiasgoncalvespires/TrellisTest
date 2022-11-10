@@ -1,17 +1,24 @@
 FROM python:3.9
 
-COPY ./trellis/requirements.txt ./
+WORKDIR /usr/app
 
+RUN git clone https://github.com/tobiasgoncalvespires/TrellisTest.git
 RUN apt-get -qq update
-RUN apt-get install -y python3.9 python-setuptools supervisor libaio1 nginx libnss3
+RUN apt-get -y install supervisor 
+RUN apt-get -y install python3.9
+RUN apt-get -y install python-setuptools 
+RUN apt-get -y install nginx 
+
 RUN pip3 install --upgrade pip setuptools
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r /usr/app/trellis/requirements.txt
+
+COPY ./supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+COPY ./nginx.conf /etc/nginx/sites-available/default
 
 ENV TRELLIS_DJANGO_SECRET_KEY="Any django secret key"
 ENV DJANGO_DEBUG=False
 
-WORKDIR /trellis
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-EXPOSE 80
+RUN mkdir /logs
+EXPOSE 8081
 
-CMD ["supervisord", "-n", "--logfile", "/log_supervisor.txt"]
+CMD ["supervisord", "-n", "--logfile", "/logs/supervisor_log.txt"]
